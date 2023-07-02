@@ -46,7 +46,7 @@ func (w Writer) Handler(idx int, wg *sync.WaitGroup, doneChan <-chan struct{}, t
 			ld("done writer")
 			return
 		case msg := <-w.ch:
-			m := tgbotapi.NewMessage(msg.ChatId, "<code>"+msg.Message+"</code>")
+			m := tgbotapi.NewMessage(msg.ChatId, msg.Message)
 			m.ParseMode = tgbotapi.ModeHTML
 			err := errors.New("tmp")
 			for err != nil {
@@ -65,6 +65,7 @@ func (w Writer) Handler(idx int, wg *sync.WaitGroup, doneChan <-chan struct{}, t
 					}
 				}
 			}
+			ld("message was send")
 		}
 	}
 }

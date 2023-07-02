@@ -9,7 +9,12 @@ import (
 )
 
 type Conf struct {
-	WorkDir string `json:"work_dir" validate:"required,gt=0"`
+	WorkDir string   `json:"work_dir" validate:"required,gt=0"`
+	Files   FilesCfg `json:"files"`
+}
+
+type FilesCfg struct {
+	NewUserTemplate string `json:"new_user_template" validate:"required,gt=0"`
 }
 
 func Validate(cfg Conf) error {

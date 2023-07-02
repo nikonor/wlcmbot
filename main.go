@@ -69,7 +69,10 @@ func main() {
 	r := reader.NewReader()
 	w := writer.NewWriter()
 	wg.Add(1)
-	ww := worker.New(wg, cfg.WorkDir, doneChan, w)
+	ww, err := worker.New(wg, cfg, doneChan, w)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	wg.Add(1)
 	go sig(doneChan, wg)

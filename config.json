@@ -1,3 +1,6 @@
 {
-    "work_dir": "/tmp"
+    "work_dir": "./workDir/",
+    "files": {
+        "new_user_template": "new_user.html"
+    }
 }
