@@ -8,20 +8,22 @@ import (
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/nikonor/quickgobot/conf"
-	"github.com/nikonor/quickgobot/reader"
-	"github.com/nikonor/quickgobot/worker"
-	"github.com/nikonor/quickgobot/writer"
+	"github.com/nikonor/wlcmbot/conf"
+	"github.com/nikonor/wlcmbot/reader"
+	"github.com/nikonor/wlcmbot/worker"
+	"github.com/nikonor/wlcmbot/writer"
 
 	log "github.com/sirupsen/logrus"
 )
 
-type Reader interface {
-	Handler(idx int, wg *sync.WaitGroup, doneChan <-chan struct{}, updates <-chan tgbotapi.Update, wChan chan writer.Message)
+type ReaderI interface {
+	Handler(idx int, wg *sync.WaitGroup, doneChan <-chan struct{}, updates <-chan tgbotapi.Update,
+		wChan chan writer.Message, worker *worker.Worker)
 }
 
-type Writer interface {
-	Handler(idx int, wg *sync.WaitGroup, doneChan <-chan struct{}, tbot *tgbotapi.BotAPI)
+type WriterI interface {
+	Handler(idx int, wg *sync.WaitGroup, doneChan <-chan struct{}, tbot *tgbotapi.BotAPI,
+		worker *worker.Worker)
 }
 
 func main() {
@@ -63,18 +65,19 @@ func main() {
 	doneChan := make(chan struct{})
 	updates := tbot.GetUpdatesChan(u)
 	wg := new(sync.WaitGroup)
+
 	r := reader.NewReader()
 	w := writer.NewWriter()
-	ww := worker.New(cfg.WorkDir)
-	ch := w.Chan()
+	wg.Add(1)
+	ww := worker.New(wg, cfg.WorkDir, doneChan, w)
 
 	wg.Add(1)
 	go sig(doneChan, wg)
 
 	wg.Add(1)
-	go w.Handler(1, wg, doneChan, tbot, ww)
+	go w.Handler(1, wg, doneChan, tbot)
 	wg.Add(1)
-	go r.Handler(1, wg, doneChan, updates, ch, ww)
+	go r.Handler(1, wg, doneChan, updates, ww)
 
 	wg.Wait()
 	time.Sleep(time.Second)

@@ -1,4 +1,4 @@
-module github.com/nikonor/quickgobot
+module github.com/nikonor/wlcmbot
 
 go 1.20
 

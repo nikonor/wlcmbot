@@ -6,7 +6,6 @@ import (
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/nikonor/quickgobot/worker"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -25,8 +24,7 @@ type Message struct {
 	Message string
 }
 
-func (w Writer) Handler(idx int, wg *sync.WaitGroup, doneChan <-chan struct{}, tbot *tgbotapi.BotAPI,
-	worker *worker.Worker) {
+func (w Writer) Handler(idx int, wg *sync.WaitGroup, doneChan <-chan struct{}, tbot *tgbotapi.BotAPI) {
 	defer wg.Done()
 
 	ld := func(s string) {
